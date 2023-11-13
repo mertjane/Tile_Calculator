@@ -115,6 +115,9 @@ $('#squareMeterInput').on('input', function() {
       var dimensions = selectedSize.split('x');
       var tileArea = dimensions[0] * dimensions[1] / 1000000; // Convert to square meters
 
+      // Clear result message
+      $('#result').text('');
+
       if (!isNaN(tilePieceInput)) {
         // Calculate square meters based on the number of tiles
         var squareMeters = tilePieceInput * tileArea;
