@@ -16,10 +16,12 @@
 
     #result {
       color: red;
+      font-size: 12px;
     }
     .warning {
       color: red;
-      font-style: italic;
+      font-size: 12px;
+
     }
   </style>
 </head>
@@ -230,9 +232,19 @@
     });
 
     $('#tilePieceInput').on('input', function () {
+      var isDecimal = $('#tilePieceInput').val().includes('.');
+      if (isDecimal) {
+        $('#decimalWarning').text('Decimal values are not allowed for quantity.');
+      } else {
+        $('#decimalWarning').text('');
+      }
       $('#squareMeterInput').val(''); // Reset square meter input when tile piece input changes
       calculate();
     });
+    //$('#tilePieceInput').on('input', function () {
+    //  $('#squareMeterInput').val(''); // Reset square meter input when tile piece input changes
+    //  calculate();
+    //});
 
     $('#tilePieceInput').on('change', function () {
       calculate();
