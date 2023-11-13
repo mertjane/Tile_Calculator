@@ -5,11 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tile Calculator</title>
   <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  <link rel="stylesheet" href="/index.css">
+  <script src="https://kit.fontawesome.com/a5f92d7a0b.js" crossorigin="anonymous"></script>
+  <style>
+    #squareMeterInput[disabled] {
+      background-color: #f0f0f0;
+      color: #888;
+    }
+  </style>
 </head>
 <body>
 
   <label for="tileSize">Select Tile Size:</label>
-  <select id="tileSize">
+  <select class="menu" id="tileSize">
     <option value="152x76">152mm x 76mm</option>
     <option value="305x305">305mm x 305mm</option>
     <option value="400x100">400mm x 100mm</option>
@@ -21,52 +29,143 @@
 
   <br>
   <br>
-  <label for="inputValue">Enter Value:</label>
-  <input type="number" id="inputValue">
+  
+  <input type="checkbox" id="disableSquareMeter" onchange="toggleSquareMeterInput()">
+  <label for="disableSquareMeter">Free Sample</label>
 
   <br>
   <br>
-  <label for="resultType">Calculate:</label>
-  <select id="resultType">
-    <option value="tiles">Number of Tiles</option>
-    <option value="squareMeters">Square Meters</option>
-  </select>
-
+  
+  <input class="value" type="number" id="squareMeterInput" placeholder="m²">
+  <button onclick="swapInputs()"><i class="fa">
+    &#xf362;
+ </i></button>
+  <input class="value" type="number" id="tilePieceInput" placeholder="piece">
   <br>
-  <br>
-
-  <button onclick="calculate()">Calculate</button>
 
   <p id="result"></p>
-
+ <!-- 
   <script>
+
+    // Add event listeners to input fields
+    $('#squareMeterInput').on('input', function() {
+      $('#tilePieceInput').val(''); // Reset tile piece input when square meter input changes
+    });
+
+    $('#tilePieceInput').on('input', function() {
+      $('#squareMeterInput').val(''); // Reset square meter input when tile piece input changes
+    });
+
     function calculate() {
       var selectedSize = $('#tileSize').val();
-      var inputValue = parseFloat($('#inputValue').val());
-      var resultType = $('#resultType').val();
-
-      // Check if the entered value is a decimal number
-      if (inputValue % 1 !== 0) {
-        alert('Please enter a whole number. Decimals are not allowed.');
-        return;
-      }
+      var squareMeterInput = parseFloat($('#squareMeterInput').val());
+      var tilePieceInput = parseFloat($('#tilePieceInput').val());
 
       var dimensions = selectedSize.split('x');
       var tileArea = dimensions[0] * dimensions[1] / 1000000; // Convert to square meters
 
-      if (isNaN(inputValue)) {
-        $('#result').text('Please enter a valid number.');
+      if (tilePieceInput && squareMeterInput % 1 !== 0) {
+        $('#result').text('Please enter a whole number. Decimals are not allowed.');
+        return;
+      }
+
+      if (!isNaN(tilePieceInput)) {
+        // Calculate square meters based on the number of tiles
+        var squareMeters = tilePieceInput * tileArea;
+        $('#squareMeterInput').val(squareMeters.toFixed(2));
+      } else if (!isNaN(squareMeterInput)) {
+        // Calculate the number of tiles based on square meters
+        var tilesRequired = Math.ceil(squareMeterInput / tileArea);
+        $('#tilePieceInput').val(tilesRequired);
       } else {
-        if (resultType === 'tiles') {
-          var tilesRequired = Math.ceil(inputValue / tileArea);
-          $('#result').text('Tiles required: ' + tilesRequired + ' (' + (inputValue / tileArea).toFixed(2) + ' tiles)');
-        } else {
-          var squareMeters = inputValue * tileArea;
-          $('#result').text('Square meters covered: ' + squareMeters.toFixed(2) + ' m²');
-        }
+        $('#result').text('Please enter a valid number.');
       }
     }
-  </script>
 
+    function toggleSquareMeterInput() {
+      var disableSquareMeter = $('#disableSquareMeter').prop('checked');
+      $('#squareMeterInput').prop('disabled', disableSquareMeter);
+    }
+  </script>
+  -->
+
+  <script>
+
+$('#squareMeterInput').on('input', function() {
+      $('#tilePieceInput').val(''); // Reset tile piece input when square meter input changes
+      calculate();
+    });
+
+    $('#tilePieceInput').on('input', function() {
+      $('#squareMeterInput').val(''); // Reset square meter input when tile piece input changes
+      calculate();
+    });
+
+
+
+    function calculate() {
+      if ($('#disableSquareMeter').prop('checked')) {
+        $('#result').text('Square meter input is disabled.');
+        return;
+      }
+      var selectedSize = $('#tileSize').val();
+      var squareMeterInput = parseFloat($('#squareMeterInput').val());
+      var tilePieceInput = parseFloat($('#tilePieceInput').val());
+
+      var dimensions = selectedSize.split('x');
+      var tileArea = dimensions[0] * dimensions[1] / 1000000; // Convert to square meters
+
+      if (!isNaN(tilePieceInput)) {
+        // Calculate square meters based on the number of tiles
+        var squareMeters = tilePieceInput * tileArea;
+        $('#squareMeterInput').val(squareMeters.toFixed(2));
+      } else if (!isNaN(squareMeterInput)) {
+        // Calculate the number of tiles based on square meters
+        var tilesRequired = Math.ceil(squareMeterInput / tileArea);
+        $('#tilePieceInput').val(tilesRequired);
+      } else {
+        $('#result').text('Please enter a valid number.');
+      }
+    }
+
+    function toggleSquareMeterInput() {
+      var disableSquareMeter = $('#disableSquareMeter').prop('checked');
+      $('#squareMeterInput').prop('disabled', disableSquareMeter);
+    }
+
+    
+   // function swapInputs() {
+      // Swap values between square meter and tile piece inputs
+    // var squareMeterValue = $('#squareMeterInput').val();
+    //  var tilePieceValue = $('#tilePieceInput').val();
+
+    //  $('#squareMeterInput').val(tilePieceValue);
+    //  $('#tilePieceInput').val(squareMeterValue);
+   // }
+
+   function swapInputs() {
+      // Toggle between swapping values and swapping places
+      var squareMeterValue = $('#squareMeterInput').val();
+      var tilePieceValue = $('#tilePieceInput').val();
+
+      if (squareMeterValue || tilePieceValue) {
+        // Swap values
+        $('#squareMeterInput').val(tilePieceValue);
+        $('#tilePieceInput').val(squareMeterValue);
+      } else {
+        // Swap places
+        var $squareMeterInput = $('#squareMeterInput');
+        var $tilePieceInput = $('#tilePieceInput');
+        var $button = $('button');
+
+        $squareMeterInput.after($tilePieceInput);
+        $tilePieceInput.after($button);
+      }
+
+      
+    }
+
+
+  </script>
 </body>
 </html>
