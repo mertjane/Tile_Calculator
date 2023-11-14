@@ -43,8 +43,9 @@
         }
 
         button {
-            height: 40px;
+            height: 44px;
             width: 40px;
+            align-self: flex-end;
         }
 
         #squareMeterInput[disabled] {
@@ -54,13 +55,10 @@
 
         #result {
             color: red;
-            font-size: 12px;
         }
 
         .warning {
             color: red;
-            font-size: 12px;
-
         }
     </style>
 </head>
@@ -87,11 +85,19 @@
     <br>
     <br>
 
-    <input class="value" type="number" id="squareMeterInput" placeholder="m²">
-    <button onclick="swapInputs()"><i class="fa">
-            &#xf362;
-        </i></button>
-    <input class="value" type="number" id="tilePieceInput" placeholder="piece">
+    <div style="display: flex;">
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+            <label style="align-self: center;font-weight: 600;" for="squareMeterInput">m²</label>
+            <input class="value" type="number" id="squareMeterInput" placeholder="m²">
+        </div>
+        <button onclick="swapInputs()"><i class="fa">
+                &#xf362;
+            </i></button>
+        <div style="display: flex; flex-direction: column; gap: 4px;">
+            <label style="align-self: center;font-weight: 600;" for="tilePieceInput">Quantity</label>
+            <input class="value" type="number" id="tilePieceInput" placeholder="Quantity">
+        </div>
+    </div>
     <p class="warning" id="decimalWarning"></p>
     <br>
     <p id="result"></p>
@@ -104,7 +110,7 @@
         });
 
         $('#tilePieceInput').on('input', function () {
-            var isDecimal = $('#tilePieceInput').val().includes('.');
+            var isDecimal = $('#tilePieceInput').val().includes('.', ",");
             if (isDecimal) {
                 $('#decimalWarning').text('Decimal values are not allowed for quantity.');
             } else {
@@ -122,6 +128,21 @@
         $('#tileSize, #squareMeterInput').on('change input', function () {
             calculate();
         });
+
+        
+
+        function handleTileSizeChange() {
+            var selectedSize = $('#tileSize').val();
+            // If the selected size is 100x100, disable the square meter input
+            var isFreeSample = selectedSize === '100x100';
+            $('#disableSquareMeter').prop('checked', isFreeSample);
+            $('#squareMeterInput').prop('disabled', isFreeSample);
+        }
+
+        function handleSquareMeterDisableChange() {
+            var disableSquareMeter = $('#disableSquareMeter').prop('checked');
+            $('#squareMeterInput').prop('disabled', disableSquareMeter);
+        }
 
         function calculate() {
             if ($('#disableSquareMeter').prop('checked')) {
@@ -145,7 +166,7 @@
             } else if (!isNaN(tilePieceInput)) {
                 // Calculate square meters based on the number of tiles
                 var squareMeters = tilePieceInput * tileArea;
-                $('#squareMeterInput').val(squareMeters.toFixed(2));
+                $('#squareMeterInput').val(squareMeters.toFixed(3));
             } else {
                 $('#result').text('Please enter a valid number.');
             }
