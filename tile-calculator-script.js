@@ -8,15 +8,7 @@
 
         // Event handler for square meter input change
         $('#squareMeterInput').on('input', function () {
-            var squareMeterValue = parseFloat($(this).val());
-            var tileSize = parseFloat($('input[name="_woovr_active"]:checked').val());
-
-            if (!isNaN(squareMeterValue) && squareMeterValue > 0 && !isNaN(tileSize) && tileSize > 0) {
-                var tileQuantity = roundToInteger(squareMeterValue / ((tileSize / 1000) * (tileSize / 1000))); // Convert size to meters
-                $('#tilePieceInput').val(tileQuantity);
-            } else {
-                $('#tilePieceInput').val('');
-            }
+            updateCalculation();
         });
 
         // Event handler for tile piece input change
@@ -29,16 +21,30 @@
 
         // Event handler for tile piece input change
         $('#tilePieceInput').on('input', function () {
-            var tileQuantity = parseInt($(this).val());
-            var tileSize = parseFloat($('input[name="_woovr_active"]:checked').val());
-
-            if (!isNaN(tileQuantity) && tileQuantity > 0 && !isNaN(tileSize) && tileSize > 0) {
-                var squareMeterValue = tileQuantity * ((tileSize / 1000) * (tileSize / 1000)); // Convert size to meters
-                $('#squareMeterInput').val(squareMeterValue.toFixed(3));
-            } else {
-                $('#squareMeterInput').val('');
-            }
+            updateCalculation();
         });
 
+        // Event handler for WPC Variations Radio Buttons selected on click
+        $(document).on('woovr_selected_on_click', function (e, selected, variations, variations_form) {
+            updateCalculation();
+        });
+
+        // Event handler for WPC Variations Radio Buttons selected
+        $(document).on('woovr_selected', function (e, selected, variations, variations_form) {
+            updateCalculation();
+        });
+
+        // Function to update the calculation based on inputs
+        function updateCalculation() {
+            var squareMeterValue = parseFloat($('#squareMeterInput').val());
+            var tileSize = parseFloat($('input[name="' + wpc_vars.sizemm + '"]:checked').val());
+
+            if (!isNaN(squareMeterValue) && squareMeterValue > 0 && !isNaN(tileSize) && tileSize > 0) {
+                var tileQuantity = roundToInteger(squareMeterValue / ((tileSize / 1000) * (tileSize / 1000))); // Convert size to meters
+                $('#tilePieceInput').val(tileQuantity);
+            } else {
+                $('#tilePieceInput').val('');
+            }
+        }
     });
 })(jQuery);
