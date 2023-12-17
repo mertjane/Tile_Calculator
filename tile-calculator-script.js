@@ -35,13 +35,13 @@
     // Function to update the calculation based on inputs
     function updateCalculation(wpc_vars) {
         var squareMeterValue = parseFloat($('#squareMeterInput').val());
-        var tileSize = parseFloat($('input[name="' + wpc_vars.woovr_variation_18837 + '"]:checked').val());
-
+        var tileSize = parseFloat($('input[name="woovr_variation_18837"]:checked').val());
+    
         if (!isNaN(squareMeterValue) && squareMeterValue > 0 && !isNaN(tileSize) && tileSize > 0) {
             var tileQuantity = roundToInteger(squareMeterValue / ((tileSize / 1000) * (tileSize / 1000))); // Convert size to meters
             $('#tilePieceInput').val(tileQuantity);
         } else {
             $('#tilePieceInput').val('');
         }
-    }
+    }    
 })(jQuery);
